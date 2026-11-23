@@ -3,6 +3,7 @@ import os
 import subprocess
 import sys
 import threading
+import requests
 import yaml
 
 # 1. Keep-alive HTTP server for Render's required web port
@@ -71,7 +72,14 @@ config = {
 with open(config_path, "w") as f:
     yaml.safe_dump(config, f)
 
-# 3. Launch lichess-bot using /tmp/config.yml
+# 3. Quick diagnostic check for BOT status and event stream
+headers = {"Authorization": f"Bearer {config['token']}"}
+acc = requests.get("https://lichess.org/api/account", headers=headers).json()
+stream = requests.get("https://lichess.org/api/stream/event", headers=headers, stream=True)
+print("ACCOUNT TITLE:", acc.get("title"), "| STREAM STATUS:", stream.status_code, flush=True)
+stream.close()
+
+# 4. Launch lichess-bot using /tmp/config.yml
 subprocess.check_call([
     sys.executable, "lichess-bot.py",
     "--config", config_path,
