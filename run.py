@@ -15,9 +15,10 @@ threading.Thread(
     daemon=True
 ).start()
 
-# 2. Generate config.yml from Render Environment Variable
+# 2. Write config to /tmp/config.yml to avoid the image's broken symlink
 token = os.environ["LICHESS_TOKEN"].strip()
-with open("/lichess-bot/config.yml", "w") as f:
+config_path = "/tmp/config.yml"
+with open(config_path, "w") as f:
     f.write(f"""token: "{token}"
 url: "https://lichess.org/"
 engine:
@@ -55,7 +56,10 @@ greeting:
 pgn_directory: ""
 """)
 
-# 3. Launch lichess-bot in verbose mode
-
-subprocess.check_call([sys.executable, "lichess-bot.py", "--config", "/lichess-bot/config.yml", "-v", "--disable_auto_logging"])
-
+# 3. Launch lichess-bot using /tmp/config.yml
+subprocess.check_call([
+    sys.executable, "lichess-bot.py",
+    "--config", config_path,
+    "-v", "--disable_auto_logging"
+])
+        
