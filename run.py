@@ -1,23 +1,30 @@
-import http.server, os, subprocess, sys, threading
+import http.server
+import os
+import subprocess
+import sys
+import threading
 
 # 1. Keep-alive HTTP server for Render's required web port
 port = int(os.environ.get("PORT", 10000))
+
 class PingHandler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
         self.end_headers()
         self.wfile.write(b"VeloCT is alive!")
+
     def log_message(self, *args):
         pass
 
 threading.Thread(
     target=lambda: http.server.HTTPServer(("0.0.0.0", port), PingHandler).serve_forever(),
-    daemon=True
+    daemon=True,
 ).start()
 
 # 2. Write config to /tmp/config.yml to avoid the image's broken symlink
 token = os.environ["LICHESS_TOKEN"].strip()
 config_path = "/tmp/config.yml"
+
 with open(config_path, "w") as f:
     f.write(f"""token: "{token}"
 url: "https://lichess.org/"
@@ -53,13 +60,12 @@ challenge:
 greeting:
   hello: "Hi {{opponent}}! I'm VeloCT (V8). Good luck!"
   goodbye: "Good game!"
-pgn_directory: ""
+pgn_directory: ''
 """)
 
 # 3. Launch lichess-bot using /tmp/config.yml
 subprocess.check_call([
     sys.executable, "lichess-bot.py",
     "--config", config_path,
-    "-v", "--disable_auto_logging"
+    "-v", "--disable_auto_logging",
 ])
-        
