@@ -2,7 +2,6 @@ FROM lichessbotdevs/lichess-bot:latest
 
 WORKDIR /lichess-bot
 
-# Download your pre-compiled v8_linux binary from GitHub Releases
 RUN python3 -c "import os, stat, urllib.request, zipfile; \
     os.makedirs('/lichess-bot/VeloCT', exist_ok=True); \
     urllib.request.urlretrieve('https://github.com/VibeDevGPT/VeloCT/releases/download/linux/v8_linux.zip', 'v8.zip'); \
@@ -13,4 +12,5 @@ RUN python3 -c "import os, stat, urllib.request, zipfile; \
 
 COPY run.py /lichess-bot/run.py
 
+ENTRYPOINT []
 CMD ["python3", "run.py"]
