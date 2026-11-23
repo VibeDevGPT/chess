@@ -56,4 +56,6 @@ pgn_directory: ""
 """)
 
 # 3. Launch lichess-bot in verbose mode
-subprocess.check_call([sys.executable, "lichess-bot.py", "-v", "--disable_auto_logging"])
+
+subprocess.check_call([sys.executable, "lichess-bot.py", "--config", "/lichess-bot/config.yml", "-v", "--disable_auto_logging"])
+
